@@ -430,10 +430,11 @@ impl State {
 
     /// Returns the most recent Date on which the given WebSocket sent an auto-response, or null
     /// if the given WebSocket never sent an auto-response.
-    pub fn get_web_socket_auto_response_timestamp(&self, ws: &WebSocket) -> Option<js_sys::Date> {
+    pub fn get_web_socket_auto_response_timestamp(&self, ws: &WebSocket) -> Option<Date> {
         self.inner
             .get_web_socket_auto_response_timestamp(ws.as_ref())
             .unwrap()
+            .map(|date| date.into())
     }
 
     /// Sets the maximum amount of time in milliseconds that a WebSocket event can run for.
