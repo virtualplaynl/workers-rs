@@ -365,10 +365,21 @@ impl State {
         self.inner
     }
 
+    /// Adds a WebSocket to the set of WebSockets attached to the Durable Object.
+    /// Once called, any incoming messages will be delivered by calling the Durable Object's
+    /// `web_socket_message` handler, and `web_socket_close` will be invoked upon disconnect.
+    /// After calling `accept_web_socket`, the WebSocket is accepted and its send and close methods
+    /// can be used.
     pub fn accept_web_socket(&self, ws: &WebSocket) {
         self.inner.accept_websocket(ws.as_ref()).unwrap()
     }
 
+    /// Adds a WebSocket to the set of WebSockets attached to the Durable Object that match the
+    /// given associated tags.
+    /// Once called, any incoming messages will be delivered by calling the Durable Object's
+    /// `web_socket_message` handler, and `web_socket_close` will be invoked upon disconnect.
+    /// After calling `accept_web_socket_with_tags`, the WebSocket is accepted and its send and
+    /// close methods can be used.
     pub fn accept_websocket_with_tags(&self, ws: &WebSocket, tags: &[&str]) {
         let tags = tags.iter().map(|it| (*it).into()).collect();
 
@@ -377,6 +388,7 @@ impl State {
             .unwrap();
     }
 
+    /// Returns the set of WebSockets attached to the Durable Object.
     pub fn get_websockets(&self) -> Vec<WebSocket> {
         self.inner
             .get_websockets()
@@ -386,6 +398,8 @@ impl State {
             .collect()
     }
 
+    /// Returns the set of WebSockets attached to the Durable Object that match the given
+    /// associated tag, supplied when calling `accept_web_socket_with_tags`.
     pub fn get_websockets_with_tag(&self, tag: &str) -> Vec<WebSocket> {
         self.inner
             .get_websockets_with_tag(tag)
@@ -395,17 +409,55 @@ impl State {
             .collect()
     }
 
-    /// Retrieve tags from a hibernatable websocket
+    /// Retrieve tags from a Hibernatable WebSocket
     pub fn get_tags(&self, websocket: &WebSocket) -> Vec<String> {
         self.inner.get_tags(websocket.as_ref()).unwrap()
     }
 
+    /// sets an automatic response, auto-response, for the request provided for all WebSockets
+    /// attached to the Durable Object. If a request is received matching the provided request
+    /// then the auto-response will be returned without waking WebSockets in hibernation and
+    /// incurring billable duration charges.
     pub fn set_websocket_auto_response(&self, pair: &worker_sys::WebSocketRequestResponsePair) {
         self.inner.set_websocket_auto_response(pair).unwrap();
     }
 
+    /// Returns the WebSocketRequestResponsePair object last set by `set_websocket_auto_response`,
+    /// or None if not auto-response has been set.
     pub fn get_websocket_auto_response(&self) -> Option<worker_sys::WebSocketRequestResponsePair> {
         self.inner.get_websocket_auto_response().unwrap()
+    }
+
+    /// Returns the most recent Date on which the given WebSocket sent an auto-response, or null
+    /// if the given WebSocket never sent an auto-response.
+    pub fn get_web_socket_auto_response_timestamp(&self, ws: &WebSocket) -> Option<js_sys::Date> {
+        self.inner
+            .get_web_socket_auto_response_timestamp(ws.as_ref())
+            .unwrap()
+    }
+
+    /// Sets the maximum amount of time in milliseconds that a WebSocket event can run for.
+    /// If None or value 0 is provided and a timeout has been previously set, then the timeout
+    /// will be unset. The maximum value of timeout is 604,800,000 ms (7 days).
+    pub fn set_hibernatable_web_socket_event_timeout(&self, timeout_ms: Option<u64>) {
+        if let Some(timeout_ms) = timeout_ms {
+            self.inner
+                .set_hibernatable_web_socket_event_timeout(timeout_ms as f64)
+                .unwrap();
+        } else {
+            self.inner
+                .unset_hibernatable_web_socket_event_timeout()
+                .unwrap();
+        }
+    }
+
+    /// Returns the currently set hibernatable WebSocket event timeout if one has been set
+    /// via `set_hibernatable_web_socket_event_timeout`.
+    pub fn get_hibernatable_web_socket_event_timeout(&self) -> Option<u64> {
+        self.inner
+            .get_hibernatable_web_socket_event_timeout()
+            .unwrap()
+            .map(|f| f as u64)
     }
 }
 

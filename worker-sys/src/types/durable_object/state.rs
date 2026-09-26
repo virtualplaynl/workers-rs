@@ -66,43 +66,25 @@ extern "C" {
         this: &DurableObjectState,
     ) -> Result<Option<WebSocketRequestResponsePair>, JsValue>;
 
-    #[wasm_bindgen(method, js_name=getWebSocketAutoResponseTimestamp)]
-    pub fn get_web_socket_auto_response_timestamp(
-        this: &DurableObjectState,
-        ws: &web_sys::WebSocket,
-    ) -> Option<js_sys::Date>;
-
     #[wasm_bindgen(method, catch, js_name=getWebSocketAutoResponseTimestamp)]
-    pub fn try_get_web_socket_auto_response_timestamp(
+    pub fn get_web_socket_auto_response_timestamp(
         this: &DurableObjectState,
         ws: &web_sys::WebSocket,
     ) -> Result<Option<js_sys::Date>, JsValue>;
 
-    #[wasm_bindgen(method, js_name=setHibernatableWebSocketEventTimeout)]
-    pub fn set_hibernatable_web_socket_event_timeout(this: &DurableObjectState);
-
     #[wasm_bindgen(method, catch, js_name=setHibernatableWebSocketEventTimeout)]
-    pub fn try_set_hibernatable_web_socket_event_timeout(
+    pub fn unset_hibernatable_web_socket_event_timeout(
         this: &DurableObjectState,
     ) -> Result<(), JsValue>;
 
-    #[wasm_bindgen(method, js_name=setHibernatableWebSocketEventTimeout)]
-    pub fn set_hibernatable_web_socket_event_timeout_with_timeout_ms(
-        this: &DurableObjectState,
-        timeout_ms: f64,
-    );
-
     #[wasm_bindgen(method, catch, js_name=setHibernatableWebSocketEventTimeout)]
-    pub fn try_set_hibernatable_web_socket_event_timeout_with_timeout_ms(
+    pub fn set_hibernatable_web_socket_event_timeout(
         this: &DurableObjectState,
         timeout_ms: f64,
     ) -> Result<(), JsValue>;
-
-    #[wasm_bindgen(method, js_name=getHibernatableWebSocketEventTimeout)]
-    pub fn get_hibernatable_web_socket_event_timeout(this: &DurableObjectState) -> Option<f64>;
 
     #[wasm_bindgen(method, catch, js_name=getHibernatableWebSocketEventTimeout)]
-    pub fn try_get_hibernatable_web_socket_event_timeout(
+    pub fn get_hibernatable_web_socket_event_timeout(
         this: &DurableObjectState,
     ) -> Result<Option<f64>, JsValue>;
 }
